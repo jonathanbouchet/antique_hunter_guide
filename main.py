@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import plotly.graph_objs as go
 
 st.set_page_config(layout="wide",
                    page_title="Cairo count",
@@ -48,6 +49,7 @@ with col1:
 with col2:
     if st.session_state.random_data is not None:
         df = st.session_state.data
+
         fig = px.scatter(df, 
                          x="num_pages", 
                          y="num_cairo", 
@@ -57,5 +59,32 @@ with col2:
                          marginal_y="histogram", 
                          range_x=[-0.5,10.5], 
                          range_y=[-0.5,10.5])#, marginal_nbinsx=10, marginal_nbinsy=10)
-        # fig.update_traces(marker_size=10)
-        st.plotly_chart(fig, use_container_width=True, key="data_plot", on_select="rerun")
+        fig.update_layout(
+            title="Number of pages v. Cairo occurances",
+            xaxis_title="number of pages",
+            yaxis_title="number of Cairo")
+        st.plotly_chart(fig, use_container_width=True, key="scatter_plot", on_select="rerun")
+
+        df2 = st.session_state.data[["chapter_id", "num_pages"]]
+        df3 = st.session_state.data[["chapter_id", "num_cairo"]]
+
+        trace1 = go.Scatter(x=df2["chapter_id"], y=df2["num_pages"], mode='lines', name='number of pages', line=dict(color='blue'))
+        trace2 = go.Scatter(x=df3["chapter_id"], y=df3["num_cairo"], mode='lines', name='number of Cairo', line=dict(color='red'))
+
+        data = [trace1, trace2]
+
+        layout = go.Layout(title='Number of pages and Cairo occurances per chapter',
+                        xaxis=dict(title='chapter #'),
+                        yaxis=dict(title='Count'),
+                        hovermode='closest')
+        
+        fig = go.Figure(data=data, layout=layout)
+        st.plotly_chart(fig, use_container_width=True, key="line_plot", on_select="rerun")
+
+
+        # fig = px.line(df2, 
+        #                  x="chapter_id", 
+        #                  y="num_pages", 
+        #                  hover_data=["num_pages", "chapter_id"], markers=True)
+        # fig.add_scatter(x=df3['chapter_id'], y=df3['num_cairo'], mode='lines', name='# of Cairo', line=dict(color='#4CC005'))
+        # st.plotly_chart(fig, use_container_width=True, key="line_plot", on_select="rerun")
