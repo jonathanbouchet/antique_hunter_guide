@@ -12,7 +12,7 @@ st.set_page_config(layout="wide",
                        'About': "cairo count"
     })
 
-st.title("CAIRO count")
+st.title("CAIRO count DEV")
 
 # st.sidebar.image("cover.png", use_container_width=True)
 with st.sidebar:
